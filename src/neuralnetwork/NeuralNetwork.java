@@ -41,7 +41,7 @@ public class NeuralNetwork {
 				for(int k = 0; k < currweights.length;k++){
 					a += currweights[k] * inputs[k];
 				}
-				this.values[i][j] = a;
+				this.values[i][j] = sigmoid(a);
 			}
 		}
 	}
