@@ -4,6 +4,7 @@ package neuralnetwork;
 import org.neuroph.core.data.DataSet;
 import org.neuroph.core.data.DataSetRow;
 import org.neuroph.nnet.MultiLayerPerceptron;
+import org.neuroph.nnet.learning.BackPropagation;
 import org.neuroph.util.TransferFunctionType;
 import org.neuroph.util.data.norm.MaxMinNormalizer;
 import org.neuroph.util.data.sample.SubSampling;
@@ -38,15 +39,18 @@ public class GradePrediction {
         int nodes = (int)Math.round(connections/32.0);
         System.out.println("Hidden Nodes:" + nodes);
         network = new MultiLayerPerceptron(TransferFunctionType.SIGMOID,32,nodes,1);
-        network.getLearningRule().learn(trainingSet,0.005);
+        BackPropagation bp  = new BackPropagation();
+        bp.setNeuralNetwork(network);
+        bp.setMaxError(0.005);
+        bp.doLearningEpoch(trainingSet);
+        network.learn(trainingSet, bp);
 
         System.out.println();
         System.out.println("######### TRAINING #########");
         System.out.println();
 
-        System.out.println("Learning Rate: " + network.getLearningRule().getLearningRate());
-        System.out.println("Total Iterations: " + network.getLearningRule().getCurrentIteration());
-        System.out.println("Total error: " + network.getLearningRule().getTotalNetworkError());
+        System.out.println("Total Iterations: " + bp.getCurrentIteration());
+        System.out.println("Total error: " + bp.getTotalNetworkError());
 
     }
 
@@ -54,25 +58,23 @@ public class GradePrediction {
         System.out.println();
         System.out.println("######### TESTING #########");
         System.out.println();
+        
         double totalError = 0;
         double squareSum = 0;
         for(DataSetRow dataRow : testSet.getRows()) {
             network.setInput(dataRow.getInput());
             network.calculate();
             double[] networkOutput = network.getOutput();
-            double error = Math.abs(networkOutput[0] - dataRow.getDesiredOutput()[0]);
+            double error = Math.abs(networkOutput[0]*20 - dataRow.getDesiredOutput()[0]);
             totalError += error;
             squareSum += error * error;
-            //System.out.println("Input: " + Arrays.toString(dataRow.getInput()));
-            //System.out.println("Output: " + Arrays.toString(networkOutput));
-            //System.out.println("Desired Output: " + Arrays.toString(dataRow.getDesiredOutput()));
         }
 
         double mean = totalError/testSet.size();
-        double stddev = squareSum/testSet.size() - mean*mean;
-        System.out.println("Test Error Accumulation: " + totalError);
+        double stddev = Math.sqrt(squareSum/testSet.size() - mean*mean);
+
         System.out.println("Mean: " + mean);
-        System.out.println("Std dev:"  + stddev);
+        System.out.println("Std dev: "  + stddev);
     }
 
 }
