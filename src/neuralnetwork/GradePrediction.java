@@ -14,7 +14,9 @@ import java.util.List;
 
 
 /**
- * Created by diogo on 12/04/16.
+ * Created by João Guarda on 12/04/16.
+ *
+ * Grade Prediction class using neuroph API
  */
 public class GradePrediction {
 
@@ -23,10 +25,11 @@ public class GradePrediction {
     DataSet testSet;
 
     GradePrediction(){
-        DataSet data = DataSet.createFromFile("student-mat.csv",32,1,";",true);
+        DataSet data = DataSet.createFromFile("student-por.csv",32,1,";",true);
         MaxMinNormalizer normalizer = new MaxMinNormalizer();
         normalizer.normalize(data);
-        SubSampling sampling = new SubSampling(66,34);
+        System.out.println(Arrays.toString(data.getRows().get(0).getDesiredOutput()));
+        SubSampling sampling = new SubSampling(60,40);
         List<DataSet> sets = sampling.sample(data);
         trainingSet = sets.get(0);
         testSet = sets.get(1);
@@ -38,11 +41,14 @@ public class GradePrediction {
         double connections = (double)trainingSet.size()/4.0;
         int nodes = (int)Math.round(connections/32.0);
         System.out.println("Hidden Nodes:" + nodes);
+
+
         network = new MultiLayerPerceptron(TransferFunctionType.SIGMOID,32,nodes,1);
         BackPropagation bp  = new BackPropagation();
         bp.setNeuralNetwork(network);
-        bp.setMaxError(0.005);
-        bp.doLearningEpoch(trainingSet);
+        bp.setLearningRate(0.2);
+        bp.setMaxError(0.001);
+        bp.setMaxIterations(1000);
         network.learn(trainingSet, bp);
 
         System.out.println();
@@ -65,7 +71,7 @@ public class GradePrediction {
             network.setInput(dataRow.getInput());
             network.calculate();
             double[] networkOutput = network.getOutput();
-            double error = Math.abs(networkOutput[0]*20 - dataRow.getDesiredOutput()[0]);
+            double error = Math.abs(networkOutput[0] - dataRow.getDesiredOutput()[0]);
             totalError += error;
             squareSum += error * error;
         }
