@@ -14,7 +14,7 @@ public class Tests {
         int nodes = 10;
         System.out.println("##### Nodes test #####");
         double maxHits= -1;
-        double minError = 0;
+        double minError = 1000;
         double nrNodes = 10;
         for(int j = 0; j < 5; j++){
             System.out.println("Testing for " + nodes + " nodes.");
