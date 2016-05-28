@@ -5,16 +5,22 @@ Para os nós de entrada apenas se decidiu retirar a coluna da escola que os alun
 
 ### Percentagem de Treino/Teste
 
-Implementar e fazer estatísticas
 
 ### Nós escondidos
 
-Fazer estatísticas
 
 ### Taxa de Aprendizagem 
 
-Fazer estatísticas
+
+Meaning: Learning Rate. Training parameter that controls the size of weight and bias changes in learning of the training algorithm.
 
 ### Momento
 
 Fazer estatísticas
+
+
+Meaning: Momentum simply adds a fraction m of the previous weight update to the current one.
+The momentum parameter is used to prevent the system from converging to a local minimum or saddle point.
+A high momentum parameter can also help to increase the speed of convergence of the system.
+However, setting the momentum parameter too high can create a risk of overshooting the minimum, which can cause the system to become unstable.
+A momentum coefficient that is too low cannot reliably avoid local minima, and can also slow down the training of the system.

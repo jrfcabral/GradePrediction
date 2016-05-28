@@ -23,6 +23,7 @@ public class Gui extends JFrame{
     private JSpinner rate;
     private JButton runButton;
     private JButton testButton;
+    private JSpinner training;
 
     public Gui(){
         super("Grade Prediction");
@@ -32,12 +33,14 @@ public class Gui extends JFrame{
         SpinnerNumberModel momentumModel = new SpinnerNumberModel(0.5,0,1,0.05);
         SpinnerNumberModel errorModel = new SpinnerNumberModel(0.001,0,1,0.001);
         SpinnerNumberModel rateModel = new SpinnerNumberModel(0.2,0,1,0.05);
+        SpinnerNumberModel trainingModel = new SpinnerNumberModel(60,0,100,1);
         layers.setModel(layersModel);
         nodes.setModel(nodesModel);
         momentum.setModel(momentumModel);
         error.setModel(errorModel);
         iterations.setModel(iterationsModel);
         rate.setModel(rateModel);
+        training.setModel(trainingModel);
         setContentPane(panel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         pack();
@@ -60,17 +63,20 @@ public class Gui extends JFrame{
                     JOptionPane.showMessageDialog(that,"Input file was not specified", "ERROR", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-
-                gradePrediction = new GradePrediction(path.getText(),(int) nodes.getValue(),(double) rate.getValue(), (double) error.getValue(), (int) iterations.getValue(), (double)momentum.getValue());
+                long time = System.currentTimeMillis();
+                gradePrediction = new GradePrediction(path.getText(),(int) nodes.getValue(),(double) rate.getValue(), (double) error.getValue(), (int) iterations.getValue(), (double)momentum.getValue(),(int) training.getValue());
+                time = System.currentTimeMillis()-time;
                 testButton.setEnabled(true);
                 JOptionPane.showMessageDialog(that, "Training Set size: " + gradePrediction.trainingSetSize() + "\n" +
                         "Test Set size: " + gradePrediction.testSetSize() + "\n" + "\n" +
                         "Total Iterations: " + gradePrediction.getIterations() + "\n" +
-                        "Total Network Error: " + + gradePrediction.getTotalNetworkError() + "\n",
+                        "Total Network Error: " + gradePrediction.getTotalNetworkError() + "\n" +
+                        "Time to train: " + time + "\n",
                         "TRAINING RESULTS",
                         JOptionPane.INFORMATION_MESSAGE
 
                 );
+
 
             }
         });

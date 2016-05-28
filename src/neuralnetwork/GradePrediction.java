@@ -3,12 +3,9 @@ package neuralnetwork;
 
 import org.neuroph.core.data.DataSet;
 import org.neuroph.core.data.DataSetRow;
-import org.neuroph.core.learning.error.MeanSquaredError;
 import org.neuroph.nnet.MultiLayerPerceptron;
-import org.neuroph.nnet.learning.BackPropagation;
 import org.neuroph.nnet.learning.MomentumBackpropagation;
 import org.neuroph.util.TransferFunctionType;
-import org.neuroph.util.benchmark.BenchmarkTaskResults;
 import org.neuroph.util.data.norm.MaxMinNormalizer;
 import org.neuroph.util.data.sample.SubSampling;
 
@@ -37,19 +34,19 @@ public class GradePrediction {
     DataSet data;
     int hits;
 
-    public GradePrediction(String dataSetPath, int nodes, double learningRate, double maxError, int maxIterations, double momentum){
+    public GradePrediction(String dataSetPath, int nodes, double learningRate, double maxError, int maxIterations, double momentum, int trainingPercentage){
         hits=0;
-        data = DataSet.createFromFile(dataSetPath,32,1,";",true);
+        data = DataSet.createFromFile(dataSetPath,31,1,";",true);
         getMaxOutput();
         MaxMinNormalizer normalizer = new MaxMinNormalizer();
         normalizer.normalize(data);
-        SubSampling sampling = new SubSampling(66,34);
+        SubSampling sampling = new SubSampling(trainingPercentage,100-trainingPercentage);
         List<DataSet> sets = sampling.sample(data);
         trainingSet = sets.get(0);
         testSet = sets.get(1);
 
 
-        network = new MultiLayerPerceptron(TransferFunctionType.SIGMOID,32,nodes,1);
+        network = new MultiLayerPerceptron(TransferFunctionType.SIGMOID,31,nodes,1);
         bp  = new MomentumBackpropagation();
         bp.setNeuralNetwork(network);
         bp.setLearningRate(learningRate);
