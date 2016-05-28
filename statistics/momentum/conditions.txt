@@ -2,4 +2,4 @@ Nodes : 11
 Training set : 60%
 Max iterations: 2000
 Min error: 0,001
-Momentum : 0,5
+Learning rate : 0,2

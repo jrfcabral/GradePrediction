@@ -59,7 +59,7 @@ public class GradePrediction {
     }
 
     public int getIterations(){
-      return bp.getCurrentIteration();
+        return bp.getCurrentIteration();
     }
 
     public double getTotalNetworkError(){
@@ -143,5 +143,31 @@ public class GradePrediction {
 
     public int hits() {
         return hits;
+    }
+
+    public void testNeuralNetworkNoFile() {
+        hits = 0;
+        double[] desired = new double[this.testSet.size()];
+        double[] output = new double[this.testSet.size()];
+        double totalError = 0;
+        double squareSum = 0;
+        int i=0;
+
+        for(DataSetRow dataRow : testSet.getRows()) {
+            network.setInput(dataRow.getInput());
+            network.calculate();
+            double[] networkOutput = network.getOutput();
+            output[i] = Math.round(networkOutput[0] * max);
+            desired[i] = dataRow.getDesiredOutput()[0] * max;
+            double error = Math.abs(output[i] - desired[i]);
+            if(error == 0.0)
+                hits++;
+            totalError += error;
+            squareSum += error * error;
+            i++;
+        }
+
+        mean = totalError/testSet.size();
+        stdDev = Math.sqrt(squareSum/testSet.size() - mean*mean);
     }
 }
